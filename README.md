@@ -1,5 +1,9 @@
-AR Marker Experience – WebAR with A-Frame & AR.js
-This is a marker-based WebAR experience built using A-Frame and AR.js. It works directly in the browser using a webcam—no app needed!
+**# AR Marker Experience – WebAR with A-Frame & AR.js**
+This is a **marker-based WebAR experience** built using **A-Frame** and **AR.js**.
+
+
+This WebAR project was developed to be integrated into an **interactive magazine experience**. Using marker-based augmented reality (AR), readers can scan printed markers in the magazine using their device’s webcam to bring 3D models, animations, lighting effects, and sound to life—right from the pages of the magazine. No apps or downloads are needed. Everything runs directly in the browser. 
+
 
 <br>
 Features
