@@ -65,15 +65,20 @@
 
         <!-- Drone Marker -->
         <a-marker type="pattern" url="drone.patt" id="drone-marker">
-            <a-entity id="drone-wrapper" position="0 0 0" scale="1 1 1"
-                gesture-detector="swipeleft: moveLeft; swiperight: moveRight; swipeup: moveUp; swipedown: moveDown;">
+            <a-entity id="drone-wrapper" position="0 0 0" scale="1 1 1">
+                <!-- Light effect -->
+                <a-light id="drone-glow-light" type="point" color="#00ffff" intensity="5" distance="10" decay="2"
+                    position="0 1 0">
+                </a-light>
 
                 <!-- Drone Model (Animatable) -->
-                <a-entity gltf-model="drone.glb" position="0 0 0" scale="3 3 3" rotation="0 0 0"
+                <a-entity id="drone-model" gltf-model="drone.glb" position="0 0 0" scale="3 3 3" rotation="0 0 0"
                     animation="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear;">
                 </a-entity>
             </a-entity>
         </a-marker>
+
+
 
         <a-marker type="pattern" url="hero.patt" id="hero-marker">
             <a-entity id="hero-wrapper" position="0 0 0" rotation="0 180 0" scale="0.5 0.5 0.5">
@@ -115,9 +120,32 @@
     </script>
 
     <script>
-        const drone = document.querySelector('#drone-wrapper');
+        document.addEventListener('DOMContentLoaded', () => {
+            const droneMarker = document.querySelector('#drone-marker');
+            const glowLight = document.querySelector('#drone-glow-light');
 
+            droneMarker.addEventListener('markerFound', () => {
+                glowLight.setAttribute('animation__pulse', {
+                    property: 'intensity',
+                    from: 0.2,
+                    to: 2,
+                    dur: 1000,
+                    dir: 'alternate',
+                    loop: true,
+                    easing: 'easeInOutSine'
+                });
+            });
+
+            droneMarker.addEventListener('markerLost', () => {
+                glowLight.removeAttribute('animation__pulse');
+                glowLight.setAttribute('intensity', 0); // Turn off the light
+            });
+        });
+    </script>
+
+    <script>
         // Define movement for swipe gestures
+        /*
         function moveLeft() {
             drone.object3D.position.x -= 0.5; // Move left
             drone.setAttribute('material', 'color', '#FF0000'); // Change color to red when moved
@@ -137,6 +165,7 @@
             drone.object3D.position.y -= 0.5; // Move down
             drone.setAttribute('material', 'color', '#FFFF00'); // Change color to yellow
         }
+        */
     </script>
 
 </body>
