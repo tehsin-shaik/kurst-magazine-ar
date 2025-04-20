@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/aarongooner/aframe-gesture-detector/dist/aframe-gesture-detector.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <a-scene embedded arjs="sourceType: webcam;">
+        <a-light type="ambient" color="#ffffff" intensity="1"></a-light>
+
+        <a-marker type="pattern" url="mushroom.patt">
+            <a-entity id="mushroom-wrapper" position="0 0 0" rotation="0 180 0" scale="4 4 4">
+                <!-- Mushroom model with auto pulse -->
+                <a-entity gltf-model="mushroom_house.glb" position="0 0 0"
+                    animation="property: scale; from: 3 3 3; to: 7 7 7; dir: alternate; dur: 1000; loop: true; easing: easeInOutSine;">
+                </a-entity>
+            </a-entity>
+        </a-marker>
+
+        <!-- Earth Marker -->
+        <a-marker type="pattern" url="earth.patt">
+            <!-- Ambient Light: Subtle global illumination -->
+            <a-light type="ambient" color="#ffffff" intensity="1.3"></a-light>
+
+            <!-- Directional Light: Simulating the Sun -->
+            <a-light type="directional" color="#FFD700" intensity="1.2" position="5 5 5" target="#earth-wrapper"
+                castShadow="true">
+            </a-light>
+
+            <!-- Point Light: Additional lighting to highlight Earth -->
+            <a-light type="point" color="#ffffff" intensity="1" position="0 2 -3" decay="1" castShadow="true"></a-light>
+
+            <a-entity id="earth-wrapper" position="0 0 0" rotation="0 90 0" scale="0.5 0.5 0.5">
+
+                <!-- Rotating Earth Model -->
+                <a-entity gltf-model="earth.glb" position="0 0 0"
+                    animation__rotate="property: rotation; to: 0 360 0; dur: 10000; loop: true; easing: linear;">
+                </a-entity>
+
+                <!-- Fixed Text (NOT a child of rotating Earth) -->
+                <a-entity position="0 0 0">
+                    <a-text value="Climate change affects weather patterns, sea levels, and biodiversity."
+                        position="0 3 0" rotation="0 0 0" scale="1 1 1" color="white" align="center" width="6">
+                    </a-text>
+
+                    <a-text value="What can we do? Reduce emissions, use renewable energy, and protect nature."
+                        position="0 2 0" rotation="0 0 0" scale="1 1 1" color="white" align="center" width="6">
+                    </a-text>
+                </a-entity>
+
+            </a-entity>
+        </a-marker>
+
+        <!-- Drone Marker -->
+        <a-marker type="pattern" url="drone.patt" id="drone-marker">
+            <a-entity id="drone-wrapper" position="0 0 0" scale="1 1 1"
+                gesture-detector="swipeleft: moveLeft; swiperight: moveRight; swipeup: moveUp; swipedown: moveDown;">
+
+                <!-- Drone Model (Animatable) -->
+                <a-entity gltf-model="drone.glb" position="0 0 0" scale="3 3 3" rotation="0 0 0"
+                    animation="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear;">
+                </a-entity>
+            </a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="hero.patt" id="hero-marker">
+            <a-entity id="hero-wrapper" position="0 0 0" rotation="0 180 0" scale="0.5 0.5 0.5">
+                <!-- Hero Model -->
+                <a-entity gltf-model="hero.glb" position="0 0 0" scale="0.01 0.01 0.01" rotation="0 240 0"></a-entity>
+
+                <!-- Background Music -->
+                <a-entity id="hero-music"
+                    sound="src: url(heromusic.mp3); autoplay: false; loop: true; volume: 0.7"></a-entity>
+            </a-entity>
+
+            <!-- Shockwave / Power-Up Effect -->
+            <a-ring position="0 0.1 0" radius-inner="0.1" radius-outer="0.2" color="#FFD700" opacity="0.2"
+                rotation="-90 0 0"
+                animation="property: scale; from: 1 1 1; to: 5 5 5; dur: 800; loop: true; dir: alternate;"
+                animation__fade="property: material.opacity; from: 0.6; to: 0.1; dur: 800; loop: true; dir: alternate;">
+            </a-ring>
+
+            <a-light type="directional" color="#FFD700" intensity="2" position="2 5 5" target="#hero-wrapper"
+                castShadow="true">
+            </a-light>
+
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        const heroMarker = document.querySelector('#hero-marker');
+        const musicEntity = document.querySelector('#hero-music');
+
+        heroMarker.addEventListener('markerFound', () => {
+            musicEntity.components.sound.playSound();
+        });
+
+        heroMarker.addEventListener('markerLost', () => {
+            musicEntity.components.sound.stopSound();
+        });
+    </script>
+
+    <script>
+        const drone = document.querySelector('#drone-wrapper');
+
+        // Define movement for swipe gestures
+        function moveLeft() {
+            drone.object3D.position.x -= 0.5; // Move left
+            drone.setAttribute('material', 'color', '#FF0000'); // Change color to red when moved
+        }
+
+        function moveRight() {
+            drone.object3D.position.x += 0.5; // Move right
+            drone.setAttribute('material', 'color', '#00FF00'); // Change color to green
+        }
+
+        function moveUp() {
+            drone.object3D.position.y += 0.5; // Move up
+            drone.setAttribute('material', 'color', '#0000FF'); // Change color to blue
+        }
+
+        function moveDown() {
+            drone.object3D.position.y -= 0.5; // Move down
+            drone.setAttribute('material', 'color', '#FFFF00'); // Change color to yellow
+        }
+    </script>
+
+</body>
+
+</html>
