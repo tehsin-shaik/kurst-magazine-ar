@@ -1,22 +1,25 @@
-**# AR Marker Experience – WebAR with A-Frame & AR.js**
-This is a **marker-based WebAR experience** built using **A-Frame** and **AR.js**.
-
-
-This WebAR project was developed to be integrated into an **interactive magazine experience**. Using marker-based augmented reality (AR), readers can scan printed markers in the magazine using their device’s webcam to bring 3D models, animations, lighting effects, and sound to life—right from the pages of the magazine. No apps or downloads are needed. Everything runs directly in the browser. 
-
-
+<h1>
+#AR Marker Experience – WebAR with A-Frame & AR.js
+</h1>
 <br>
-Features
-- Mushroom House Marker – A magical mushroom model with a pulsing animation effect.
-- Earth Marker – A rotating 3D Earth with informative climate change messages.
-- Drone Marker – A hovering, spinning drone with a glowing light effect that pulses when visible.
-- Hero Marker – A superhero model that plays background music along with a shockwave effect when the marker is detected.
-</br>
+<p>This is a <strong>marker-based WebAR experience</strong> built using <strong>A-Frame</strong> and <strong>AR.js</strong>.</p>
 
-Used:
-- HTML + JavaScript
-- A-Frame 1.2.0
-- AR.js
-- .glb 3D models from SketchFab
-- .patt pattern-based markers
-- Visual Studio Code (for development)
+<p>This WebAR project was developed to be integrated into an <strong>interactive magazine experience</strong>. Using marker-based augmented reality (AR), readers can scan printed markers in the magazine using their device’s webcam to bring <strong>3D models</strong>, <strong>animations</strong>, <strong>lighting effects</strong>, and <strong>sound</strong> to life—right from the pages of the magazine. No apps or downloads are needed. Everything runs directly in the browser.</p>
+
+<h2>Features</h2>
+<ul>
+  <li><strong>Mushroom House Marker</strong> – A magical mushroom model with a pulsing animation effect.</li>
+  <li><strong>Earth Marker</strong> – A rotating 3D Earth with informative climate change messages.</li>
+  <li><strong>Drone Marker</strong> – A hovering, spinning drone with a glowing light effect that pulses when visible.</li>
+  <li><strong>Hero Marker</strong> – A superhero model that plays background music along with a shockwave effect when the marker is detected.</li>
+</ul>
+
+<h2>Used</h2>
+<ul>
+  <li>HTML + JavaScript</li>
+  <li>A-Frame 1.2.0</li>
+  <li>AR.js</li>
+  <li>.glb 3D models from SketchFab</li>
+  <li>.patt pattern-based markers</li>
+  <li>Visual Studio Code (for development)</li>
+</ul>
