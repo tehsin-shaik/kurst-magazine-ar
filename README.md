@@ -12,6 +12,8 @@
   <li><strong>Earth Marker</strong> – A rotating 3D Earth with informative climate change messages.</li>
   <li><strong>Drone Marker</strong> – A hovering, spinning drone with a glowing light effect that pulses when visible.</li>
   <li><strong>Hero Marker</strong> – A superhero model that plays background music along with a shockwave effect when the marker is detected.</li>
+  <li><strong>Fish Marker (Jumping Whale)</strong> – A whale model that performs a jumping animation from one marker to another using a Bézier curve. The whale faces the direction of movement and disappears at the end of the jump for a natural, interactive effect.</li>
+
 </ul>
 
 <h2>Used</h2>
