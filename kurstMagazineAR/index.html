@@ -7,7 +7,6 @@
     <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.js"></script>
     <script
         src="https://cdn.jsdelivr.net/gh/aarongooner/aframe-gesture-detector/dist/aframe-gesture-detector.js"></script>
-
     <style>
         body {
             margin: 0;
@@ -18,8 +17,10 @@
 
 <body>
     <a-scene embedded arjs="sourceType: webcam;">
+        <!-- Global Lighting -->
         <a-light type="ambient" color="#ffffff" intensity="1"></a-light>
 
+        <!-- MUSHROOM Marker -->
         <a-marker type="pattern" url="mushroom.patt">
             <a-entity id="mushroom-wrapper" position="0 0 0" rotation="0 180 0" scale="4 4 4">
                 <!-- Mushroom model with auto pulse -->
@@ -65,21 +66,17 @@
 
         <!-- Drone Marker -->
         <a-marker type="pattern" url="drone.patt" id="drone-marker">
-            <a-entity id="drone-wrapper" position="0 0 0" scale="1 1 1">
-                <!-- Light effect -->
-                <a-light id="drone-glow-light" type="point" color="#00ffff" intensity="5" distance="10" decay="2"
-                    position="0 1 0">
-                </a-light>
+            <a-entity id="drone-wrapper" position="0 0 0" scale="1 1 1"
+                gesture-detector="swipeleft: moveLeft; swiperight: moveRight; swipeup: moveUp; swipedown: moveDown;">
 
                 <!-- Drone Model (Animatable) -->
-                <a-entity id="drone-model" gltf-model="drone.glb" position="0 0 0" scale="3 3 3" rotation="0 0 0"
+                <a-entity gltf-model="drone.glb" position="0 0 0" scale="3 3 3" rotation="0 0 0"
                     animation="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear;">
                 </a-entity>
             </a-entity>
         </a-marker>
 
-
-
+        <!-- HERO Marker -->
         <a-marker type="pattern" url="hero.patt" id="hero-marker">
             <a-entity id="hero-wrapper" position="0 0 0" rotation="0 180 0" scale="0.5 0.5 0.5">
                 <!-- Hero Model -->
@@ -103,9 +100,28 @@
 
         </a-marker>
 
+        <!-- FISH MARKERS -->
+        <a-marker type="pattern" url="letterA.patt" id="markerA">
+            <a-entity id="start-point" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="letterB.patt" id="markerB">
+            <a-entity id="end-point" position="0 0 0"></a-entity>
+        </a-marker>
+
+        <!-- Fish Model -->
+        <a-entity id="fish" gltf-model="#fishModel" scale="1 1 1" position="0 0 0" visible="false"></a-entity>
+
+        <!-- Assets -->
+        <a-assets>
+            <a-asset-item id="fishModel" src="mythicwhale.glb"></a-asset-item>
+        </a-assets>
+
+        <!-- Camera -->
         <a-entity camera></a-entity>
     </a-scene>
 
+    <!-- Hero Music Logic -->
     <script>
         const heroMarker = document.querySelector('#hero-marker');
         const musicEntity = document.querySelector('#hero-music');
@@ -119,33 +135,11 @@
         });
     </script>
 
+    <!-- Drone Gesture Movement -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const droneMarker = document.querySelector('#drone-marker');
-            const glowLight = document.querySelector('#drone-glow-light');
+        const drone = document.querySelector('#drone-wrapper');
 
-            droneMarker.addEventListener('markerFound', () => {
-                glowLight.setAttribute('animation__pulse', {
-                    property: 'intensity',
-                    from: 0.2,
-                    to: 2,
-                    dur: 1000,
-                    dir: 'alternate',
-                    loop: true,
-                    easing: 'easeInOutSine'
-                });
-            });
-
-            droneMarker.addEventListener('markerLost', () => {
-                glowLight.removeAttribute('animation__pulse');
-                glowLight.setAttribute('intensity', 0); // Turn off the light
-            });
-        });
-    </script>
-
-    <script>
         // Define movement for swipe gestures
-        /*
         function moveLeft() {
             drone.object3D.position.x -= 0.5; // Move left
             drone.setAttribute('material', 'color', '#FF0000'); // Change color to red when moved
@@ -165,7 +159,80 @@
             drone.object3D.position.y -= 0.5; // Move down
             drone.setAttribute('material', 'color', '#FFFF00'); // Change color to yellow
         }
-        */
+    </script>
+
+    <!-- Fish Jump Logic -->
+    <script>
+        const fish = document.querySelector('#fish');
+        const markerA = document.querySelector('#markerA');
+        const markerB = document.querySelector('#markerB');
+        const startPoint = document.querySelector('#start-point');
+        const endPoint = document.querySelector('#end-point');
+
+        let t = 0;
+        let jumping = false;
+
+        fish.addEventListener('model-loaded', (e) => {
+            const animations = e.detail.model.animations;
+            if (animations.length > 0) {
+                fish.setAttribute('animation-mixer', {
+                    clip: animations[0].name,
+                    timeScale: 2
+                });
+            }
+        });
+
+        function getWorldPosition(el) {
+            const pos = new THREE.Vector3();
+            el.object3D.getWorldPosition(pos);
+            return pos;
+        }
+
+        function startJump() {
+            const start = getWorldPosition(startPoint);
+            const end = getWorldPosition(endPoint);
+            const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+            mid.y += 4;
+
+            t = 0;
+            jumping = true;
+            fish.setAttribute('visible', true);
+
+            const dir = new THREE.Vector3().subVectors(start, end);
+            const angle = Math.atan2(dir.x, dir.z) * (180 / Math.PI);
+            fish.setAttribute('rotation', `0 ${angle} 0`);
+
+            function animateJump() {
+                if (!jumping) return;
+                t += 0.005;
+                if (t > 1) {
+                    jumping = false;
+                    fish.setAttribute('visible', false);
+                    fish.object3D.position.copy(start);
+                    return;
+                }
+
+                const pos = new THREE.Vector3(
+                    parabola(start.x, mid.x, end.x, t),
+                    parabola(start.y, mid.y, end.y, t),
+                    parabola(start.z, mid.z, end.z, t)
+                );
+                fish.object3D.position.copy(pos);
+                requestAnimationFrame(animateJump);
+            }
+
+            animateJump();
+        }
+
+        function parabola(p0, p1, p2, t) {
+            return (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        }
+
+        setInterval(() => {
+            if (markerA.object3D.visible && markerB.object3D.visible && !jumping) {
+                startJump();
+            }
+        }, 1000);
     </script>
 
 </body>
